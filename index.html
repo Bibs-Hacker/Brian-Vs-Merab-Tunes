@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 My Magical World, Mercy Merab 🌟</title>
+    
+    <style>
+        :root {
+            /* Dark Theme Variables (Default) */
+            --bg-primary: #1a0024;
+            --bg-secondary: #0a0011;
+            --text-color: #f0e6ff;
+            --card-bg: #2d0046;
+            --card-front: #ff6f91;
+            --accent-color: #ffeb3b;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Light Theme Variables (Toggled) */
+        body.light-theme {
+            --bg-primary: #f0f0f0;
+            --bg-secondary: #ffffff;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --card-front: #6495ed; /* Cornflower blue for a bright contrast */
+            --accent-color: #ff9800;
+            --shadow-color: rgba(0, 0, 0, 1.15);
+        }
+
+        /* --- GLOBAL STYLES --- */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.8s, color 0.8s;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-shadow: 0 0 5px rgba(255, 235, 59, 0.5);
+            margin-bottom: 20px;
+        }
+
+        footer {
+            margin-top: auto; /* Pushes footer to the bottom */
+            padding: 15px;
+            font-size: 1.1em;
+            color: rgba(25, 205, 25, 1.5);
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-secondary);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--card-front);
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* --- THEME TOGGLE BUTTON --- */
+        #theme-toggle {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.8em;
+            z-index: 20;
+            transition: transform 0.3s;
+            color: var(--accent-color);
+        }
+        #theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        .light-theme #theme-toggle {
+            color: #ff9800; /* Sun color */
+        }
+
+        /* --- CARD STYLES (Retained & Updated) --- */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 20px;
+            max-width: 900px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .card-container {
+            perspective: 1500px;
+            cursor: pointer;
+            transition: transform 0.8s;
+            margin-top: 30px;
+        }
+
+        .card {
+            width: 320px;
+            height: 220px;
+            background-color: transparent;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
+                        width 1s ease-in-out, height 1s ease-in-out;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.5s;
+        }
+
+        .card-front {
+            background-color: var(--card-front);
+            color: #fff;
+            font-size: 1.6em;
+            font-weight: bold;
+            line-height: 1.2;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+
+        .card-front:hover {
+            opacity: 0.9;
+            transform: scale(1.03); 
+        }
+
+        .card-back {
+            background-color: var(--card-bg);
+            color: var(--text-color); 
+            transform: rotateY(180deg);
+            opacity: 0;
+            flex-direction: column;
+            padding: 30px;
+            box-shadow: inset 0 0 15px rgba(255, 105, 180, 0.4);
+            transition: opacity 0.8s 0.7s;
+        }
+
+        .card.flipped { transform: rotateY(180deg); }
+        .card.flipped .card-front { opacity: 0; }
+        .card.flipped .card-back { opacity: 1; }
+
+        .card.expanded {
+            width: 550px; 
+            height: 380px;
+        }
+        
+        .heart-emoji {
+            font-size: 2.5em;
+            margin-top: 10px;
+            animation: pulse 1s infinite alternate;
+            color: var(--accent-color);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* --- INTERACTIVE SECTIONS --- */
+        .interactive-section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .section-header {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            text-shadow: 0 0 3px var(--accent-color);
+        }
+
+        .content-toggle-btn {
+            background-color: var(--card-front);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .content-toggle-btn:hover {
+            background-color: #ff476e;
+            transform: translateY(-2px);
+        }
+
+        .hidden-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.8s ease-in-out, padding 0.8s ease-in-out;
+            padding-top: 0;
+            margin-top: 10px;
+        }
+
+        .hidden-content.visible {
+            max-height: 500px; /* Sufficiently large to reveal content */
+            padding-top: 15px;
+        }
+        
+        /* Starry background cleanup (no stars needed with the splash/theme, but keeping star-like colors) */
+    </style>
+    </head>
+<body>
+    <div id="splash-screen">
+        Loading Magic... ✨
+    </div>
+    <button id="theme-toggle">🌙</button>
+
+    <header>For My Queen, Mercy Merab</header>
+    
+    <main class="main-content">
+        <div class="card-container" id="cardContainer">
+            <div class="card" id="loveCard">
+                <div class="card-front">
+                    A Magical Message Awaits...
+                    <div class="heart-emoji">💖</div>
+                </div>
+
+                <div class="card-back">
+                    <h2 style="color: var(--accent-color);">💌 My Dearest Mercy,</h2>
+                    <p>
+                        Every second spent with you is a chapter in the most beautiful story I could ever write. You are my compass, my confidant, and the source of all my smiles.
+                    </p>
+                    <p style="font-size: 1.1em; margin-top: 15px;">
+                        Thank you for being you. You are loved beyond measure.
+                    </p>
+                    <p style="font-weight: bold; margin-top: 15px; color: var(--text-color);">
+                        Forever Yours, <br> <strong>Bebs Brian</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <hr style="width: 50%; border: 1px solid rgba(255, 255, 255, 0.1);">
+
+        <div class="interactive-section">
+            <h3 class="section-header">📜 Our Magical Story</h3>
+            <button class="content-toggle-btn" data-target="story-content">Reveal Our Journey</button>
+            <div id="story-content" class="hidden-content">
+                <p><h3>
+It all started on that day fate smiled upon me… the day *you, Mercy Merab*, walked into my world — and unknowingly, into my heart. 💫 I still remember the way you smiled… soft, innocent, powerful. Like the universe itself whispered, “That’s her.” That moment, Merab, it was the *beginning of everything beautiful*. ❤️
+
+You weren’t just a girl I met… you were *a vibe*, a force. The kind of soul that doesn’t just pass through — but stays, heals, and inspires. I remember how we connected — tech minds, curious hearts, and souls meant to intertwine. *From our first late-night chats*, to the random voice notes, to those giggles about nothing and everything… It all felt real. It all felt right. 🧠💬🎧
+
+Since then, we’ve shared a journey only hearts like ours can understand. From *talking dreams*, planning wild futures, teasing each other about life and coding, to holding each other down when things got heavy — you’ve been my peace, my fire, my daily inspiration. 🔥📱💕
+You changed everything, Merab. You made my life *brighter, warmer, louder — but in the best way possible*. You filled those silent spaces I never admitted were empty. You turned my lonely codes into *love letters*, my solo vibes into shared energy, and my heartbeats into *duets of meaning*. 🎶💞
+
+I’m no longer just *Tech Brian*… I’m *your Tech Brian*. The one who feels strongest when you’re near, who thinks deeper because of your words, and who now believes in something more — because of the way you love. 💪💗🌍
+
+*We’re not just a love story.* We’re a movement, a frequency, a whole song still being written. I look at us and I see more than now — I see *a forever coded in care, fire, loyalty, and passion*.
+
+Merab, if the world goes quiet, you’ll still be my loudest feeling. If storms rise, I’ll still fight to protect your peace. Because you’re not just a part of me — *you are me.* My present. My purpose. My safe space. 🛡️🫂
+
+*I love you beyond lines of code. Beyond every project. Beyond every word. I love you until forever runs out.*
+
+With everything in me —  
+Your Tech Brian 💻❤️🔐
+                </h3></p>
+                <p style="font-size: 0.9em; color: var(--accent-color);">
+                    *Every mem>ory is a jewel in our treasure chest.*
+                </p>
+            </div>
+        </div>
+
+        <div class="interactive-section">
+            <h3 class="section-header">✨ A Future Promise</h3>
+            <button class="content-toggle-btn" data-target="promise-content">Make a Promise</button>
+            <div id="promise-content" class="hidden-content">
+                <p>
+                    I promise to always be your biggest supporter, to listen💫💌 without judgment🙌, and to make you feel safe🤍💞 whenever you need it.<br> My love Merab i want to promise you the best experience of love💗 than ever.
+                    <br> <i>MERAB JUST KNOW YOU MEAN ALOT TO MÉ,💖🍃</i>
+                </p>
+                <p style="font-weight: bold; color: var(--card-front);">
+                  <h3>
+<strong>My dearest Merab 💌,</strong>
+
+Every time I look at you, I see not just the love of my life, but my peace, my light, my reason to keep pushing 💪. You came into my life like a soft breeze on a hot day 🌬️☀️ — so gentle, so healing, yet so powerful. You filled my lonely spaces with joy 🌸, laughter 😂, and a comfort I never knew I needed 🫂.
+
+I promise you this — our journey is only beginning 🌍. Together, we will laugh until our cheeks hurt 😂, cry together when life gets hard 😢, and grow stronger with every sunrise 🌅. I can’t wait to build our dreams 🏗️ — to travel the world with you 🌏, to cheer for each other’s wins 🏆, to support each other’s battles 🛡️, and to build a future that feels like home 🏡.
+
+I imagine our late-night tech talks 💻, cuddling over code bugs 🐛, and celebrating every solved error like a victory 🎉. I want it all with you — the slow days, the loud laughs, the quiet support, the fiery passion 🔥, and the forever love ❤️.
+
+You are not just <u>Merab Merab</u>, you're my heart's most beautiful creation 💖. And as Love Brian, I vow to love you with the softest part of my soul 🌙.
+
+Forever yours,
+<strong>Brian</strong> 💙✨"
+                </h3>
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer><h3>
+        &copy; 2025 Created with Love for Mercy Merab. All rights reserved.
+    </h3></footer>
+
+    <script>
+        const loveCard = document.getElementById('loveCard');
+        const cardContainer = document.getElementById('cardContainer');
+        const splashScreen = document.getElementById('splash-screen');
+        const themeToggle = document.getElementById('theme-toggle');
+        const contentToggleButtons = document.querySelectorAll('.content-toggle-btn');
+
+        const EXPAND_DELAY_MS = 1000;
+
+        // --- 1. Splash Screen Logic ---
+        window.addEventListener('load', () => {
+            // Wait 2 seconds, then fade out the splash screen
+            setTimeout(() => {
+                splashScreen.classList.add('fade-out');
+            }, 1000); 
+        });
+
+        // --- 2. Card Click Handler (Same Smooth Logic) ---
+        cardContainer.addEventListener('click', () => {
+            const isFlipped = loveCard.classList.contains('flipped');
+
+            if (!isFlipped) {
+                loveCard.classList.add('flipped');
+                setTimeout(() => {
+                    loveCard.classList.add('expanded');
+                }, EXPAND_DELAY_MS);
+            } else {
+                loveCard.classList.remove('expanded');
+                setTimeout(() => {
+                    loveCard.classList.remove('flipped');
+                }, 800);
+            }
+        });
+
+        // --- 3. Theme Toggle Logic ---
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.body.classList.toggle('light-theme');
+            themeToggle.textContent = isLight ? '☀️' : '🌙';
+            
+            // Save preference (optional, but good practice)
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        });
+
+        // Check for saved theme preference on load
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+        }
+
+        // --- 4. Interactive Section Logic ---
+        contentToggleButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const targetId = event.target.getAttribute('data-target');
+                const targetElement = document.getElementById(targetId);
+                const isVisible = targetElement.classList.toggle('visible');
+
+                if (isVisible) {
+                    event.target.textContent = 'Hide Section';
+                } else {
+                    // Revert button text based on section ID
+                    event.target.textContent = targetId === 'story-content' ? 'Reveal Our Journey' : 'Make a Promise';
+                }
+            });
+        });
+        
+        // --- End of JavaScript ---
+    </script>
+    </body>
+</html>
